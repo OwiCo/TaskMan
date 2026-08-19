@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TaskFlow.IntegrationTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a3262e5af3688b631ad1175b47babbf7c0327984")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+707cab475d3e24bd330799adcac1ef5300805c65")]
 [assembly: System.Reflection.AssemblyProductAttribute("TaskFlow.IntegrationTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TaskFlow.IntegrationTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
