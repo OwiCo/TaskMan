@@ -1,3 +1,7 @@
+# .NET build output
+bin/
+obj/
+
 # Personal decision-log / interview prep notes — not part of the public deliverable.
 DECISIONS.md
 WALKTHROUGH.md
