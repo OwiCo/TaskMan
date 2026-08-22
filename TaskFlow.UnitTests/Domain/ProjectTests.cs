@@ -66,4 +66,30 @@ public class ProjectTests
 
         Assert.Equal(maxLength, project.Name);
     }
+
+    [Fact]
+    public void AllocateNextNumber_FirstCall_ReturnsOneAndIncrements()
+    {
+        var project = new Project(Guid.NewGuid(), "ENG", "Engineering", Now);
+        var later = Now.AddHours(1);
+
+        var number = project.AllocateNextNumber(later);
+
+        Assert.Equal(1, number);
+        Assert.Equal(2, project.NextItemNumber);
+        Assert.Equal(later, project.UpdatedAt);
+    }
+
+    [Fact]
+    public void AllocateNextNumber_CalledTwice_ReturnsSequentialNumbers()
+    {
+        var project = new Project(Guid.NewGuid(), "ENG", "Engineering", Now);
+
+        var first = project.AllocateNextNumber(Now);
+        var second = project.AllocateNextNumber(Now);
+
+        Assert.Equal(1, first);
+        Assert.Equal(2, second);
+        Assert.Equal(3, project.NextItemNumber);
+    }
 }

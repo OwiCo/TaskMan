@@ -19,11 +19,12 @@ generating the human-readable ticket identifier (`Key` + a per-project counter, 
 - `Key` is 2–10 characters, **uppercase letters only** (`A`–`Z`, no digits, no hyphens, no lowercase).
 - `Name` is non-blank, max 200 characters.
 - `NextItemNumber` starts at 1 on creation. It is never a constructor argument — the entity always
-  initializes it itself. It increments once per `WorkItem` created under the project (enforced when
-  `WorkItem` creation is built — not yet, since `WorkItem` doesn't exist yet).
+  initializes it itself. `AllocateNextNumber(now)` returns the number to use for a new work item and
+  increments the counter in the same call; the unique constraint on `(project_id, number)` is the actual
+  guarantee against duplicates under a race, same pattern as `Key` uniqueness below.
 - `Key` must be unique **across all projects** — this cannot be enforced by the entity alone (an entity
-  can't see other rows), so it will be a database unique constraint once persistence exists, with an
-  application-level pre-check for a friendly error message. Not yet built.
+  can't see other rows), so it's a database unique constraint, with an application-level pre-check
+  (`ProjectService.CreateAsync`) for a friendly error message.
 
 ### Enforcement
 

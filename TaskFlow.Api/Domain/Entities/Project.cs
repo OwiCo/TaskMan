@@ -33,6 +33,19 @@ public sealed partial class Project
         UpdatedAt = createdAt;
     }
 
+    /// <summary>
+    /// Returns the number to use for a new work item under this project, and increments the
+    /// counter. The unique constraint on (project_id, number) is the actual guarantee against
+    /// duplicates under a race - see DECISIONS.md.
+    /// </summary>
+    public int AllocateNextNumber(DateTimeOffset now)
+    {
+        var number = NextItemNumber;
+        NextItemNumber++;
+        UpdatedAt = now;
+        return number;
+    }
+
     [GeneratedRegex("^[A-Z]{2,10}$")]
     private static partial Regex KeyPattern();
 
