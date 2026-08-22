@@ -91,3 +91,43 @@ first place). An illegal combination throws `InvalidHierarchyException`. Re-pare
   computed.
 - **No cascading delete story here yet** — see the delete-blocking design in the private decision log;
   not implemented in code until the persistence layer exists to enforce it at the database level.
+
+---
+
+## User
+
+Deliberately minimal — exists only so a `WorkItem` can have a reporter/assignee and a `Comment` can have
+an author. No login, no sessions, no password. Not a real account system.
+
+### Invariants
+
+- `Name` is non-blank, max 200 characters.
+- `Email` is non-blank, max 200 characters. **No format validation at the entity level** — checking that
+  something looks like an email address is a request-shape concern, not a domain rule, so it belongs in a
+  validator once one exists, not here.
+
+### Enforcement
+
+Both guard clauses live in the constructor. No public setters — no profile-editing in this scope.
+
+---
+
+## Comment
+
+Genuinely CRUD-shaped, deliberately anemic — there is no rule here worth a rich model. Belongs to exactly
+one `WorkItem` and has exactly one author.
+
+### Invariants
+
+- `WorkItemId` and `AuthorId` cannot be empty.
+- `Body` is non-blank, max 2000 characters (this cap is an assumption, not something explicitly decided —
+  worth revisiting if it's wrong).
+- `CreatedAt` never changes — comments are not editable in this version. There is no `UpdatedAt`.
+- Deleted when its `WorkItem` is deleted (cascade) — this is a database-level concern (a foreign key with
+  `ON DELETE CASCADE`), not something the entity itself can enforce; not built yet since persistence
+  doesn't exist yet.
+
+### Enforcement
+
+Guard clauses in the constructor. No public setters at all — there is nothing about a `Comment` that can
+change after it's created.
