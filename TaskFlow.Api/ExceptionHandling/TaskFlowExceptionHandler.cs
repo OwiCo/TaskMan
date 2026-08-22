@@ -78,11 +78,15 @@ public sealed class TaskFlowExceptionHandler(ILogger<TaskFlowExceptionHandler> l
                 Detail = "A record with the same unique value already exists.",
             },
 
+            // Belt-and-suspenders here too: services explicitly check that referenced records exist
+            // before inserting (giving a clearer 404 via NotFoundException), and block deletes that
+            // would orphan children. 
             DbUpdateException { InnerException: PostgresException { SqlState: "23503" } } => new ProblemDetails
             {
-                Title = "Referenced by other records.",
+                Title = "Foreign key violation.",
                 Status = StatusCodes.Status409Conflict,
-                Detail = "This record cannot be deleted or changed because other records still reference it.",
+                Detail = "This operation references a record that doesn't exist, or would leave " +
+                         "another record pointing at nothing.",
             },
 
             _ => new ProblemDetails
