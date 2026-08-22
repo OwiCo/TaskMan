@@ -32,6 +32,13 @@ public sealed class TaskFlowExceptionHandler(ILogger<TaskFlowExceptionHandler> l
     {
         ProblemDetails problem = exception switch
         {
+            NotFoundException ex => new ProblemDetails
+            {
+                Title = "Not found.",
+                Status = StatusCodes.Status404NotFound,
+                Detail = ex.Message,
+            },
+
             ArgumentException ex => new ProblemDetails
             {
                 Title = "Invalid request.",
