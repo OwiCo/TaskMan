@@ -18,6 +18,12 @@ public sealed class WorkItemService(AppDbContext db, TimeProvider timeProvider)
         var project = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId, cancellationToken)
             ?? throw new NotFoundException($"Project '{projectId}' was not found.");
 
+        var reporterExists = await db.Users.AnyAsync(u => u.Id == reporterId, cancellationToken);
+        if (!reporterExists)
+        {
+            throw new NotFoundException($"User '{reporterId}' was not found.");
+        }
+
         WorkItem? parent = null;
         if (parentId is not null)
         {

@@ -8,6 +8,8 @@ public static class DependencyInjection
     {
         services.AddScoped<ProjectService>();
         services.AddScoped<WorkItemService>();
+        services.AddScoped<CommentService>();
+        services.AddScoped<UserService>();
 
         return services;
     }
