@@ -160,6 +160,7 @@ public class WorkItemTests
         var ex = Assert.Throws<InvalidHierarchyException>(() => Create(IssueType.Epic, anotherEpic));
 
         Assert.Equal(IssueType.Epic, ex.ChildType);
+        Assert.Equal(IssueType.Epic, ex.ParentType);
     }
 
     [Theory]
