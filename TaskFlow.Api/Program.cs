@@ -17,7 +17,7 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure();
 
 var app = builder.Build();
 

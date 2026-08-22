@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Configuration;
 using Testcontainers.PostgreSql;
-using TaskFlow.Api.Infrastructure.Persistence;
 
 namespace TaskFlow.IntegrationTests;
 
@@ -21,17 +18,17 @@ public sealed class TaskFlowApiFactory : WebApplicationFactory<Program>, IAsyncL
     {
         builder.UseEnvironment("Development");
 
-        // Program.cs reads the connection string eagerly (once, synchronously) to build
-        // AppDbContext's options before this factory's config override reliably lands in the
-        // merged configuration - relying on config timing here isn't safe. Replacing the
-        // DbContextOptions registration directly is the documented, reliable way to redirect
-        // an already-configured DbContext to a different connection string in tests.
-        builder.ConfigureServices(services =>
+        // This override now works reliably because AddInfrastructure() reads the connection string
+        // lazily (once per AppDbContext construction via the IServiceProvider-aware AddDbContext
+        // overload), not eagerly at startup - see DependencyInjection.cs. Capturing the connection
+        // string in a closure at startup was the actual bug; this config override was never the
+        // problem.
+        builder.ConfigureAppConfiguration((_, configBuilder) =>
         {
-            services.RemoveAll<DbContextOptions<AppDbContext>>();
-            services.AddDbContext<AppDbContext>(options => options
-                .UseNpgsql(_postgres.GetConnectionString())
-                .UseSnakeCaseNamingConvention());
+            configBuilder.AddInMemoryCollection(
+            [
+                new KeyValuePair<string, string?>("ConnectionStrings:Postgres", _postgres.GetConnectionString())
+            ]);
         });
     }
 
